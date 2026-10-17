@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { GdgMark, DEFAULT_CARD_ITEMS, renderCardLogo } from '../constants/logos';
-import type { SponsorCustomization, CardState, Difficulty, CardItem } from '../types/game';
+import type { CardState, Difficulty, CardItem } from '../types/game';
 import { Card } from './Card';
 import { TrophyIcon, KeyboardIcon, TargetIcon, FlameIcon } from '../constants/icons';
 import { soundFX } from '../utils/audio';
@@ -8,15 +8,11 @@ import { soundFX } from '../utils/audio';
 interface StartScreenProps {
   onStartGame: (difficulty: Difficulty, modeDuration?: number) => void;
   bestScore: number;
-  onOpenSponsors: () => void;
-  sponsorConfig: SponsorCustomization | null;
 }
 
 export const StartScreen: React.FC<StartScreenProps> = ({
   onStartGame,
   bestScore,
-  onOpenSponsors,
-  sponsorConfig,
 }) => {
   const [selectedDiff, setSelectedDiff] = useState<Difficulty>('easy');
 
@@ -94,7 +90,7 @@ export const StartScreen: React.FC<StartScreenProps> = ({
           </button>
         </div>
 
-        {/* Primary Action Buttons */}
+        {/* Primary Action Button */}
         <div className="hero-cta-group">
           <button
             className="pill-btn pill-primary start-game-btn"
@@ -107,25 +103,6 @@ export const StartScreen: React.FC<StartScreenProps> = ({
                 <path d="M8 5V19L19 12L8 5Z" />
               </svg>
               <span>PLAY {selectedDiff.toUpperCase()} MODE</span>
-            </span>
-          </button>
-
-          <button
-            className="pill-btn sponsor-settings-btn"
-            onClick={onOpenSponsors}
-            aria-label="Organizer Sponsor Customization"
-          >
-            <svg viewBox="0 0 24 24" width="16" height="16" fill="none">
-              <path
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span>
-              {sponsorConfig?.enabled ? `Sponsor: ${sponsorConfig.sponsorName}` : 'Sponsor Slots'}
             </span>
           </button>
         </div>

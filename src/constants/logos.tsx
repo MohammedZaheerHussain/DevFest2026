@@ -251,91 +251,6 @@ export const WifiLogo: React.FC<LogoRendererProps> = ({ size = 56 }) => (
   </svg>
 );
 
-// Generic / Custom Sponsor Logo Renderer
-export const SponsorGenericLogo: React.FC<{
-  tier?: string;
-  name: string;
-  color: string;
-  svgMarkup?: string;
-  size?: number;
-}> = ({ tier = 'SPONSOR', name, color, svgMarkup, size = 52 }) => {
-  if (svgMarkup) {
-    return (
-      <div
-        className="sponsor-custom-svg-wrapper"
-        style={{ width: size, height: size }}
-        dangerouslySetInnerHTML={{ __html: svgMarkup }}
-      />
-    );
-  }
-
-  return (
-    <svg viewBox="0 0 48 48" width={size} height={size} fill="none" aria-label={name}>
-      <title>{name}</title>
-      <circle cx="24" cy="24" r="22" fill={color} opacity="0.15" />
-      <polygon
-        points="24,6 40,16 40,32 24,42 8,32 8,16"
-        stroke={color}
-        strokeWidth="2.5"
-        fill="#111530"
-      />
-      <path d="M16 28L18 20L24 25L30 20L32 28H16Z" fill={color} />
-      <circle cx="24" cy="16" r="2" fill="#FFFFFF" />
-      <text
-        x="24"
-        y="38"
-        textAnchor="middle"
-        fontSize="7"
-        fontWeight="800"
-        fill="#FFFFFF"
-        letterSpacing="0.5"
-      >
-        {tier.slice(0, 8).toUpperCase()}
-      </text>
-    </svg>
-  );
-};
-
-// Preset Sponsor Options for Organizers
-export interface SponsorPreset {
-  id: string;
-  name: string;
-  tier: string;
-  color: string;
-  tagline: string;
-}
-
-export const SPONSOR_PRESETS: SponsorPreset[] = [
-  {
-    id: 'gdg-community',
-    name: 'GDG Global',
-    tier: 'Community Partner',
-    color: '#1A73E8',
-    tagline: 'Google Developer Groups Community',
-  },
-  {
-    id: 'wtm-lead',
-    name: 'Women Techmakers',
-    tier: 'Inclusion Sponsor',
-    color: '#00BFA5',
-    tagline: 'Women Techmakers Global Program',
-  },
-  {
-    id: 'titan-sponsor',
-    name: 'DevFest Title Partner',
-    tier: 'Title Sponsor',
-    color: '#FF6D00',
-    tagline: 'Main Event Headline Partner',
-  },
-  {
-    id: 'cloud-scale',
-    name: 'CloudScale Infrastructure',
-    tier: 'Platinum Sponsor',
-    color: '#34A853',
-    tagline: 'Scalable Cloud Hosting',
-  },
-];
-
 // All 16 Canonical DevFest & Google Developer Ecosystem Card Items
 export const ALL_CARD_ITEMS: CardItem[] = [
   {
@@ -472,18 +387,6 @@ export const DEFAULT_CARD_ITEMS: CardItem[] = ALL_CARD_ITEMS.slice(0, 8);
 
 // Helper to render the appropriate logo component based on card pairId
 export const renderCardLogo = (card: CardItem, size = 56) => {
-  if (card.isSponsor) {
-    return (
-      <SponsorGenericLogo
-        name={card.name}
-        tier={card.sponsorTier}
-        color={card.color}
-        svgMarkup={card.customLogoSvg}
-        size={size}
-      />
-    );
-  }
-
   switch (card.pairId) {
     case 'google-g':
       return <GoogleGLogo size={size} />;

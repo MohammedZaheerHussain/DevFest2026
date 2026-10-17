@@ -93,13 +93,6 @@ export const Card: React.FC<CardProps> = ({ card, onClick, disabled, isFocused }
             } as React.CSSProperties
           }
         >
-          {/* Sponsor Tag if applicable */}
-          {card.isSponsor && (
-            <span className="sponsor-pill-tag">
-              {card.sponsorTier || 'SPONSOR'}
-            </span>
-          )}
-
           {/* Logo Graphic */}
           <div className="card-logo-wrapper">
             {renderCardLogo(card, 52)}

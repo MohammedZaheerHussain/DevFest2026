@@ -16,7 +16,6 @@ interface HUDProps {
   onToggleMute: () => void;
   onRestart: () => void;
   onHome: () => void;
-  onOpenSponsors: () => void;
   moves: number;
 }
 
@@ -34,7 +33,6 @@ export const HUD: React.FC<HUDProps> = ({
   onToggleMute,
   onRestart,
   onHome,
-  onOpenSponsors,
   moves: _moves,
 }) => {
   const isUrgent = !isUntimed && timeRemaining <= 10 && timeRemaining > 0;
@@ -58,24 +56,6 @@ export const HUD: React.FC<HUDProps> = ({
               <span>x{streak}</span>
             </div>
           )}
-
-          <button
-            className="pill-btn hud-action-btn sponsor-btn"
-            onClick={onOpenSponsors}
-            title="Organizer Sponsor Settings"
-            aria-label="Organizer Sponsor Settings"
-          >
-            <svg viewBox="0 0 24 24" width="14" height="14" fill="none">
-              <path
-                d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
-            <span className="btn-label-desktop">Sponsors</span>
-          </button>
 
           <button
             className={`pill-btn hud-action-btn ${isMuted ? 'muted' : ''}`}

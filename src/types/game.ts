@@ -17,12 +17,9 @@ export interface CardItem {
   id: string; // unique card id for key and indexing (e.g. 'gemini-card-1')
   pairId: string; // ID of the pair (e.g. 'gemini')
   name: string; // Display label
-  category: string; // Developer ecosystem or sponsor
+  category: string; // Developer ecosystem
   color: string; // Brand accent color
   glowColor: string; // Brand accent glow
-  customLogoSvg?: string;
-  isSponsor?: boolean;
-  sponsorTier?: string;
 }
 
 export interface CardState extends CardItem {
@@ -34,16 +31,6 @@ export interface CardState extends CardItem {
 export type GamePhase = 'home' | 'playing' | 'ended';
 
 export type GameOverReason = 'victory' | 'timeout';
-
-export interface SponsorCustomization {
-  enabled: boolean;
-  targetPairId: string; // Which standard icon to replace
-  sponsorName: string;
-  sponsorTier: string; // e.g. "Title Sponsor", "Platinum Partner"
-  sponsorColor: string;
-  svgMarkup?: string;
-  presetId?: string;
-}
 
 export interface GameScoreSummary {
   score: number;

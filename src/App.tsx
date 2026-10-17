@@ -4,7 +4,6 @@ import type {
   GamePhase,
   GameScoreSummary,
   GameOverReason,
-  SponsorCustomization,
   Difficulty,
 } from './types/game';
 import { DIFFICULTY_CONFIGS } from './types/game';
@@ -12,8 +11,6 @@ import { generateDeck } from './utils/shuffle';
 import {
   getStoredBestScore,
   setStoredBestScore,
-  getStoredSponsorConfig,
-  setStoredSponsorConfig,
 } from './utils/storage';
 import { soundFX } from './utils/audio';
 import { fireMatchConfetti, fireVictoryCelebration } from './utils/confetti';
@@ -22,7 +19,6 @@ import { StartScreen } from './components/StartScreen';
 import { HUD } from './components/HUD';
 import { GameBoard } from './components/GameBoard';
 import { GameOverModal } from './components/GameOverModal';
-import { SponsorModal } from './components/SponsorModal';
 import { FloatingPoints, type FloatingPointItem } from './components/FloatingPoints';
 import { Doodles } from './components/Doodles';
 
@@ -50,8 +46,6 @@ export const App: React.FC = () => {
   const [isMuted, setIsMuted] = useState<boolean>(soundFX.getMuted());
 
   // Modals & Popups
-  const [showSponsorModal, setShowSponsorModal] = useState<boolean>(false);
-  const [sponsorConfig, setSponsorConfig] = useState<SponsorCustomization | null>(null);
   const [gameSummary, setGameSummary] = useState<GameScoreSummary | null>(null);
   const [floatingPoints, setFloatingPoints] = useState<FloatingPointItem[]>([]);
 
@@ -64,10 +58,6 @@ export const App: React.FC = () => {
   // Load initial localStorage state safely
   useEffect(() => {
     setBestScore(getStoredBestScore());
-    const storedSponsor = getStoredSponsorConfig();
-    if (storedSponsor) {
-      setSponsorConfig(storedSponsor);
-    }
   }, []);
 
   // Clear timer helper
@@ -151,7 +141,7 @@ export const App: React.FC = () => {
     const duration = customSeconds ?? cfg.seconds;
 
     setDifficulty(diff);
-    const newDeck = generateDeck(diff, sponsorConfig);
+    const newDeck = generateDeck(diff);
     setCards(newDeck);
     setFirstCard(null);
     setIsLocked(false);
@@ -166,7 +156,7 @@ export const App: React.FC = () => {
     setGameSummary(null);
     setFloatingPoints([]);
     setPhase('playing');
-  }, [sponsorConfig, stopTimer]);
+  }, [stopTimer]);
 
   // Return to Home Screen
   const handleHome = useCallback(() => {
@@ -321,15 +311,6 @@ export const App: React.FC = () => {
     setIsMuted(nextState);
   };
 
-  // Sponsor Customization Save
-  const handleSaveSponsor = (config: SponsorCustomization | null) => {
-    setSponsorConfig(config);
-    setStoredSponsorConfig(config);
-    if (phase === 'playing') {
-      setCards(generateDeck(difficulty, config));
-    }
-  };
-
   const accuracy = Math.round((pairsFound * 2 / Math.max(moves * 2, 1)) * 100);
 
   return (
@@ -345,8 +326,6 @@ export const App: React.FC = () => {
         <StartScreen
           onStartGame={startNewGame}
           bestScore={bestScore}
-          onOpenSponsors={() => setShowSponsorModal(true)}
-          sponsorConfig={sponsorConfig}
         />
       )}
 
@@ -367,7 +346,6 @@ export const App: React.FC = () => {
             onToggleMute={handleToggleMute}
             onRestart={() => startNewGame(difficulty, gameDuration)}
             onHome={handleHome}
-            onOpenSponsors={() => setShowSponsorModal(true)}
             moves={moves}
           />
 
@@ -394,15 +372,6 @@ export const App: React.FC = () => {
           summary={gameSummary}
           onPlayAgain={() => startNewGame(difficulty, gameDuration)}
           onHome={handleHome}
-        />
-      )}
-
-      {/* MODAL: Organizer Sponsor Settings */}
-      {showSponsorModal && (
-        <SponsorModal
-          currentConfig={sponsorConfig}
-          onSave={handleSaveSponsor}
-          onClose={() => setShowSponsorModal(false)}
         />
       )}
     </div>

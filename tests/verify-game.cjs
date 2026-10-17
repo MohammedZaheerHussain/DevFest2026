@@ -22,27 +22,12 @@ const DIFFICULTY_CONFIGS = {
   hard: { cards: 32, pairs: 16, seconds: 90, cols: 8 },
 };
 
-function buildDeck(diff = 'easy', sponsorConfig = null) {
+function buildDeck(diff = 'easy') {
   const cfg = DIFFICULTY_CONFIGS[diff];
-  let items = ALL_16_ICONS.slice(0, cfg.pairs).map((id) => ({
+  const items = ALL_16_ICONS.slice(0, cfg.pairs).map((id) => ({
     pairId: id,
     name: id,
-    isSponsor: false,
   }));
-
-  if (sponsorConfig && sponsorConfig.enabled) {
-    items = items.map((item) => {
-      if (item.pairId === sponsorConfig.targetPairId) {
-        return {
-          ...item,
-          name: sponsorConfig.sponsorName,
-          isSponsor: true,
-          sponsorTier: sponsorConfig.sponsorTier,
-        };
-      }
-      return item;
-    });
-  }
 
   const raw = [];
   items.forEach((item) => {
@@ -88,19 +73,7 @@ const order2 = hardDeck2.map((c) => c.id).join(',');
 assert.notStrictEqual(order1, order2, 'Subsequent decks must have distinct random permutations');
 console.log('✓ PASS: Fisher-Yates unbiased randomization verified');
 
-// Test 5: Organizer Sponsor Logo Customization Replacement
-const sponsorDeck = buildDeck('easy', {
-  enabled: true,
-  targetPairId: 'firebase',
-  sponsorName: 'Google Cloud Partner',
-  sponsorTier: 'Title Sponsor',
-});
-const sponsorCards = sponsorDeck.filter((c) => c.isSponsor);
-assert.strictEqual(sponsorCards.length, 2, 'Sponsor replacement must produce 2 sponsor cards');
-assert.strictEqual(sponsorCards[0].name, 'Google Cloud Partner');
-console.log('✓ PASS: Organizer sponsor slot replacement verified');
-
-// Test 6: Scoring & Multiplier Streaks
+// Test 5: Scoring & Multiplier Streaks
 let score = 0;
 let streak = 0;
 for (let i = 0; i < 8; i++) {
@@ -111,4 +84,4 @@ for (let i = 0; i < 8; i++) {
 assert.strictEqual(score, 800 + (0 + 25 + 50 + 75 + 100 + 100 + 100 + 100), 'Score formula with streak bonus matches');
 console.log('✓ PASS: Score calculation + streak combo multiplier verified');
 
-console.log('\nALL 6 DEVFEST 2026 GAME LOGIC SUITES PASSED! 🚀');
+console.log('\nALL 5 CORE DEVFEST 2026 GAME LOGIC SUITES PASSED! 🚀');
