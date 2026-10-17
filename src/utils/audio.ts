@@ -165,6 +165,121 @@ class SoundFX {
     }
   }
 
+  // Escalating urgent timer countdown warning when time is ending (10s down to 1s)
+  public playCountdownWarning(secondsRemaining: number) {
+    if (this.isMuted) return;
+    try {
+      this.initContext();
+      if (!this.ctx) return;
+
+      const now = this.ctx.currentTime;
+
+      // Base alert frequencies escalating as time gets closer to 0
+      // 10-6s: Warning alert pulses (580Hz - 660Hz)
+      // 5-1s: High tension arcade countdown pings (740Hz -> 1180Hz)
+      let freq = 580;
+      let isDoubleBeep = false;
+
+      if (secondsRemaining <= 1) {
+        freq = 1174.66; // D6
+        isDoubleBeep = true;
+      } else if (secondsRemaining === 2) {
+        freq = 987.77; // B5
+        isDoubleBeep = true;
+      } else if (secondsRemaining === 3) {
+        freq = 880.0; // A5
+      } else if (secondsRemaining === 4) {
+        freq = 783.99; // G5
+      } else if (secondsRemaining === 5) {
+        freq = 698.46; // F5
+      } else {
+        freq = 520 + (10 - secondsRemaining) * 30;
+      }
+
+      // First beep
+      const osc1 = this.ctx.createOscillator();
+      const gain1 = this.ctx.createGain();
+      osc1.type = secondsRemaining <= 5 ? 'square' : 'triangle';
+      osc1.frequency.setValueAtTime(freq, now);
+
+      gain1.gain.setValueAtTime(0.001, now);
+      gain1.gain.linearRampToValueAtTime(0.2, now + 0.015);
+      gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.12);
+
+      osc1.connect(gain1);
+      gain1.connect(this.ctx.destination);
+      osc1.start(now);
+      osc1.stop(now + 0.13);
+
+      // Rapid second beep for final 2 seconds
+      if (isDoubleBeep) {
+        const osc2 = this.ctx.createOscillator();
+        const gain2 = this.ctx.createGain();
+        const secondStart = now + 0.14;
+
+        osc2.type = 'square';
+        osc2.frequency.setValueAtTime(freq * 1.15, secondStart);
+
+        gain2.gain.setValueAtTime(0.001, secondStart);
+        gain2.gain.linearRampToValueAtTime(0.22, secondStart + 0.015);
+        gain2.gain.exponentialRampToValueAtTime(0.001, secondStart + 0.14);
+
+        osc2.connect(gain2);
+        gain2.connect(this.ctx.destination);
+        osc2.start(secondStart);
+        osc2.stop(secondStart + 0.15);
+      }
+    } catch {
+      // Audio fallback
+    }
+  }
+
+  // Classic retro game-over buzzer when timer reaches 0
+  public playTimeUpBuzzer() {
+    if (this.isMuted) return;
+    try {
+      this.initContext();
+      if (!this.ctx) return;
+
+      const now = this.ctx.currentTime;
+
+      // Harsh arcade buzzer tone (sawtooth + square mix)
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(160, now);
+      osc.frequency.linearRampToValueAtTime(110, now + 0.45);
+
+      gain.gain.setValueAtTime(0.25, now);
+      gain.gain.exponentialRampToValueAtTime(0.001, now + 0.5);
+
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+
+      osc.start(now);
+      osc.stop(now + 0.52);
+
+      // Low bass thud for impact
+      const subOsc = this.ctx.createOscillator();
+      const subGain = this.ctx.createGain();
+      subOsc.type = 'sine';
+      subOsc.frequency.setValueAtTime(80, now);
+      subOsc.frequency.exponentialRampToValueAtTime(40, now + 0.35);
+
+      subGain.gain.setValueAtTime(0.2, now);
+      subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+      subOsc.connect(subGain);
+      subGain.connect(this.ctx.destination);
+
+      subOsc.start(now);
+      subOsc.stop(now + 0.36);
+    } catch {
+      // Audio fallback
+    }
+  }
+
   // Grand victory fanfare
   public playVictory() {
     if (this.isMuted) return;

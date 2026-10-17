@@ -125,14 +125,15 @@ export const App: React.FC = () => {
       setTimeRemaining((prev) => {
         if (prev <= 1) {
           stopTimer();
+          soundFX.playTimeUpBuzzer();
           finishRound('timeout', score, pairsFound, 0, moves);
           return 0;
         }
 
         const nextTime = prev - 1;
-        // Urgent tick during final 10 seconds
+        // Escalating urgent audio warning so user knows time is ending (10s down to 1s)
         if (nextTime <= 10) {
-          soundFX.playTick(true);
+          soundFX.playCountdownWarning(nextTime);
         } else if (nextTime % 5 === 0) {
           soundFX.playTick(false);
         }
